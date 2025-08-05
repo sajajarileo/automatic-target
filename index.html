@@ -25,7 +25,7 @@
   <style>
     :root {
       --playHeight: 4em;
-      --btnHeight: 3.2em;
+      --btnHeight: 2.8em;
       --btnGap: 1em;
     }
     body {
@@ -55,20 +55,29 @@
     #setting {
       width: min(60%, 384px);
       display: flex;
-      flex-direction: column;
+      /* flex-direction: column; */
+      justify-content: space-between;
+      align-content: space-between;
+      flex-wrap: wrap;
       gap: var(--btnGap);
     }
     #setting li {
       width: 100%;
+      height: var(--btnHeight);
       border: 1px solid #000;
       box-sizing: border-box;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+    #setting :is(li:nth-of-type(3), li:nth-of-type(4)) {
+      width: calc((100% - var(--btnGap)) / 2);
+    }
+    #setting li label {flex: 1; cursor: pointer;}
+    #setting li input {accent-color: red; margin-left: 0.5em;}
     #setting button {
       width: 4em;
-      height: var(--btnHeight);
+      height: 100%;
       color: #000;
       position: relative;
     }
@@ -160,6 +169,12 @@
         <p>표적 유지 시간 <span>6</span>초</p>
         <button class="increase"></button>
       </li>
+      <li class="set-randomCdn">
+        <label for="input-randomCdn">랜덤 카운트 다운<input type="checkbox" id="input-randomCdn"></label>
+      </li>
+      <li class="set-randomCdn">
+        <label for="input-hideTimer">타이머 숨기기<input type="checkbox" id="input-hideTimer"></label>
+      </li>
     </ul>
     <button class="play"><h3>PLAY</h3></button>
     <small>제작: Sajajari<br>이미지 제공: HexVision</small>
@@ -185,6 +200,8 @@
 <script>
 let active;
 let countdown;
+let randomCdn;
+let hideTimer;
 let hold;
 let repeat;
 let countdownTime = 3;
@@ -196,6 +213,8 @@ const WRAP = document.getElementById('wrap');
 const PLAY = document.querySelectorAll('.play');
 const INC = document.querySelectorAll('.increase');
 const DEC = document.querySelectorAll('.decrease');
+const RANDOMCDN = document.getElementById('input-randomCdn');
+const HIDETIMER = document.getElementById('input-hideTimer');
 const DARKMODE = document.getElementById('darkmode');
 const SOUND = document.getElementById('sound');
 const SCREEN = document.getElementById('screen');
@@ -212,6 +231,14 @@ if (localStorage.getItem('settingCdn') !== null && !isNaN(Number(localStorage.ge
 if (localStorage.getItem('settingHold') !== null && !isNaN(Number(localStorage.getItem('settingHold')))) {
   holdTime = Number(localStorage.getItem('settingHold'));
   document.querySelector('.set-hold p span').innerHTML = holdTime;
+}
+if (localStorage.getItem('settingRandomCdn') === 'true') {
+  randomCdn = true;
+  RANDOMCDN.checked = true;
+}
+if (localStorage.getItem('settingHideTimer') === 'true') {
+  hideTimer = true;
+  HIDETIMER.checked = true;
 }
 
 function glitchClass(element, className){
@@ -232,13 +259,16 @@ function glitchClass(element, className){
 
 function activate(){
   let timer = countdownTime;
-  TIMER.innerText = timer;
+  if (randomCdn) timer = Math.floor(Math.random() * countdownTime) + 1;
+  // TIMER.innerText = timer;
+  hideTimer ? TIMER.innerText = '' : TIMER.innerText = timer;
   TIMER.style.display = 'block';
   SCREEN.style.backgroundImage = `url(${GIT}img/target_${Math.floor(Math.random() * 4) + 1}.jpg)`;
 
   countdown = setInterval(() => {
     timer--;
-    TIMER.innerText = timer;
+    // TIMER.innerText = timer;
+    if (hideTimer !== true) TIMER.innerText = timer;
   }, 1000);
 
   hold = setTimeout(() => {
@@ -246,7 +276,7 @@ function activate(){
     TIMER.style.display = 'none';
     if (active && !WRAP.classList.contains('muted')) BEEP.play();
     repeat = setTimeout(() => activate(), holdTime * 1000);
-  }, countdownTime * 1000);
+  }, timer * 1000);
 }
 
 function deactivate(){
@@ -296,6 +326,18 @@ DEC.forEach(dec => {
       if (holdTime < 1) holdTime = maxTime;
       this.parentElement.querySelector('p span').innerText = holdTime;
     }
+  });
+});
+
+document.querySelectorAll('[id^=input-]').forEach(each => {
+  each.addEventListener('change', (event) => {
+    if (event.target.checked && event.target === RANDOMCDN) randomCdn = true;
+    else if (event.target === RANDOMCDN) randomCdn = false;
+    if (event.target.checked && event.target === HIDETIMER) hideTimer = true;
+    else if (event.target === HIDETIMER) hideTimer = false;
+
+    localStorage.setItem('settingRandomCdn', randomCdn);
+    localStorage.setItem('settingHideTimer', hideTimer);
   });
 });
 
