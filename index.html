@@ -257,11 +257,18 @@ function glitchClass(element, className){
   });
 }
 
+let timerOriginalFz = TIMER.style.fontSize;
 function activate(){
   let timer = countdownTime;
   if (randomCdn) timer = Math.floor(Math.random() * countdownTime) + 1;
   // TIMER.innerText = timer;
-  hideTimer ? TIMER.innerText = '' : TIMER.innerText = timer;
+  if (hideTimer) {
+    TIMER.innerText = 'READY';
+    TIMER.style.fontSize = 'min(24vw, 8em)';
+  } else {
+    TIMER.innerText = timer;
+    TIMER.style.fontSize = timerOriginalFz;
+  }
   TIMER.style.display = 'block';
   SCREEN.style.backgroundImage = `url(${GIT}img/target_${Math.floor(Math.random() * 4) + 1}.jpg)`;
 
