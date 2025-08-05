@@ -13,9 +13,8 @@
       text-align: center;
       background-repeat: no-repeat;
       font-family: Arial, 'Noto Sans KR';
+      line-height: 1.5;
     }
-
-    h1 {line-height: 1.5;}
 
     ul {list-style: none;}
 
@@ -45,6 +44,7 @@
       --btnGap: 1em;
       --duration: 0.2s;
     }
+    @media (max-width: 380px) {:root {--btnHeight: 3.6em}}
     body {
       width: 100%;
       height: 100svh;
@@ -79,7 +79,7 @@
       transition: all var(--duration) ease;
     }
     #setting {
-      width: min(60%, 384px);
+      width: min(64%, 368px);
       display: flex;
       /* flex-direction: column; */
       justify-content: space-between;
