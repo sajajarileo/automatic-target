@@ -287,18 +287,16 @@ if (localStorage.getItem('settingHideTimer') === 'true') {
   HIDETIMER.checked = true;
 }
 
-function glitchClass(element, className){
+function glitchClass(element, className, event = 'transitionend'){
   element.classList.remove(className);
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
       element.classList.add(className);
       function removeClass(){
         element.classList.remove(className);
-        element.removeEventListener('animationend', removeClass);
-        element.removeEventListener('transitionend', removeClass);
+        element.removeEventListener(event, removeClass);
       }
-      element.addEventListener('animationend', removeClass);
-      element.addEventListener('transitionend', removeClass);
+      element.addEventListener(event, removeClass);
     });
   });
 }
@@ -399,10 +397,8 @@ document.querySelectorAll('[id^=input-]').forEach(each => {
 
 document.querySelectorAll('#setting button').forEach(each => {
   each.addEventListener('click', function(){
-    // glitchClass(this, 'colorRed');
-    glitchClass(this, 'scale110p');
-    // glitchClass(this.parentElement.querySelector('p'), 'colorRed');
-    glitchClass(this.parentElement.querySelector('p'), 'scale110p');
+    glitchClass(this, 'scale110p', 'animationend');
+    glitchClass(this.parentElement.querySelector('p'), 'scale110p', 'animationend');
 
     localStorage.setItem('settingCdn', countdownTime);
     localStorage.setItem('settingHold', holdTime);
