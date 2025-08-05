@@ -248,6 +248,7 @@ let countdown;
 let randomCdn;
 let hideTimer;
 let hold;
+let beep;
 let repeat;
 let countdownTime = 3;
 let holdTime = 6;
@@ -326,7 +327,9 @@ function activate(){
   hold = setTimeout(() => {
     clearInterval(countdown);
     TIMER.style.display = 'none';
-    if (active && !WRAP.classList.contains('muted')) BEEP.play();
+    if (active && !WRAP.classList.contains('muted')) {
+      beep = setTimeout(() => BEEP.play(), (timer * 1000) - 450);
+    }
     repeat = setTimeout(() => activate(), holdTime * 1000);
   }, timer * 1000);
 }
@@ -334,6 +337,7 @@ function activate(){
 function deactivate(){
   clearInterval(countdown);
   clearTimeout(hold);
+  clearTimeout(beep);
   clearTimeout(repeat);
 }
 
