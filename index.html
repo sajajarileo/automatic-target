@@ -302,13 +302,6 @@ function glitchClass(element, className){
   });
 }
 
-function fowardClass(element, className){
-  element.classList.remove(className);
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => element.classList.add(className));
-  });
-}
-
 let timerOriginalFz = TIMER.style.fontSize;
 function activate(){
   let timer = countdownTime;
