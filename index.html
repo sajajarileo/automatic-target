@@ -287,18 +287,20 @@ if (localStorage.getItem('settingHideTimer') === 'true') {
   HIDETIMER.checked = true;
 }
 
-function glitchClass(element, className, event = 'transitionend'){
-  element.classList.remove(className);
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => {
-      element.classList.add(className);
-      function removeClass(){
-        element.classList.remove(className);
-        element.removeEventListener(event, removeClass);
-      }
-      element.addEventListener(event, removeClass);
-    });
-  });
+function toggleClass(target, className){
+  target.classList.contains(className) ? target.classList.remove(className) : target.classList.add(className);
+}
+
+function glitchClass(target, className, endEvent = 'transitionend'){
+  let endGlitch = () => {
+    target.classList.remove(className);
+    target.removeEventListener(endEvent, endGlitch);
+  }
+  target.classList.remove(className);
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    target.classList.add(className);
+    target.addEventListener(endEvent, endGlitch);
+  }));
 }
 
 let timerOriginalFz = TIMER.style.fontSize;
